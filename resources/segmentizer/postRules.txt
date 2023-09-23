@@ -1,0 +1,22 @@
+# Ausschlussregeln: Entspricht die Zeichenkette HINTER dem Punkt einer Regel, so ist dieser Punkt kein Satzende
+#
+# folgt ein kleingeschriebenes Wort auf ein Satzendezeichen dann kein Satzende
+- \s?[a-z][a-zA-Z]*[\.!?]?
+#
+# nicht mehr relevant da ". " statt "." etc. als Trenner; folgen Zahlen die ggf. ebenfalls einen Satzendezeichen beinhalten dann kein Satzende (Bsp.: Datum)
+#- ([0-9]*(\.)?[0-9]*)+ 
+#
+# nicht mehr relevant da ". " statt "." etc. als Trenner; ein Punkt eingeschlossen von Zahlen (inkl. einem Komma) ist kein Satzende (Bsp.: Geldbetrag)
+#- ([0-9]*(\.)?[0-9]*)*[0-9]*((,)?[0-9]*)?
+#
+# wenn gefolgt von weiteren Satzendezeichen, dann kein Satzende
+- [\.!?]+
+#
+# Punkt vor einem Ausführungszeichen gefolgt von Punkt, Komma, Semikolon etc. ist kein Satzende
+#- ["'`]
+#- ["'`][\S]?
+#- ["'`][\.?!,;:]
+- [,;:]
+- \)\s*\w*
+- [0-9]\s*.*
+

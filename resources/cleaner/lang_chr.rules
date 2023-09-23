@@ -1,0 +1,7 @@
+RULE 13
+DESC:Viele Großbuchstaben/Zeichen gleicher Art hintereinander (Cherokee DISABLED)
+REGEXP:$UNMATCHABLE
+
+RULE 19
+DESC:Sätze, die mindestens 8 großgeschriebene Wörter hintereinander besitzen (Cherokee DISABLED)
+REGEXP:$UNMATCHABLE

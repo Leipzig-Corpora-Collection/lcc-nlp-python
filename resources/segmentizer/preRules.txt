@@ -1,0 +1,21 @@
+# Ausschlussregeln: Entspricht die Zeichenkette VOR dem Punkt einer Regel, so ist dieser Punkt kein Satzende
+#
+# ein Buchstabe vor einem Punkt; dann kein Satzende (Beispiel: A. Miller)
+- [\p{IsL}]
+# eine Buchstabenfolge nach einer öffnenden Klammer
+- \([\p{IsL}]+
+#
+# Strings mit Binnenpunkten (Bsp.: a.m., F.D.P.)
+#- .*[\p{IsL}]\.[\p{IsL}].*
+- .*[\p{L}]\.[\p{L}].*
+# Urls (sehr grob)
+- (http://)?www[a-zA-Z/\.]*
+# E-mail-Adressen
+- [a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+
+# Jahreszahlen zwischen 1000 und 2999
++ [1-2][0-9][0-9][0-9]
+# Ziffern
+- [0-9\.\-]
+- [0-9][0-9\.\-]
+- [0-9][0-9][0-9\.\-]
+- \([0-9]+

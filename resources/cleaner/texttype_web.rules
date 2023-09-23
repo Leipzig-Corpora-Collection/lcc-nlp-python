@@ -1,0 +1,11 @@
+#rule format:
+#RULE NUMBER
+#DESC:description
+#REGEXP:regexp
+#MINLENGTH:
+#MAXLENGTH:
+# empty lines will be skipped...
+
+RULE 3000
+DESC:different html-tags
+REGEXP:a href|<tr>

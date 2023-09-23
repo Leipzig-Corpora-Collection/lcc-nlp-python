@@ -1,0 +1,11 @@
+{
+    "python.testing.pytestArgs": [
+        ".",
+        // disable coverage for debugging
+        "--no-cov",
+        // disable ansi color output (-vv)
+        "-q",
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
+}

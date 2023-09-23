@@ -1,0 +1,12 @@
+graft docs
+graft resources
+graft src
+graft tests
+
+include setup.cfg
+include pyproject.toml
+include tox.ini
+
+include README.md
+
+global-exclude *.py[cod] __pycache__/* *.so *.dylib

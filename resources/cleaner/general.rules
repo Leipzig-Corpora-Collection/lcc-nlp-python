@@ -1,0 +1,172 @@
+#rule format:
+#RULE NUMBER
+#DESC:description
+#REGEXP:regexp
+#MINLENGTH:minimal sentence length
+#MAXLENGTH:maximum sentence length
+#REPLACE_CHARS:character that should be delete - needs REPLACE_RATIO or REPLACE_COUNT
+#REPLACE_RATIO:sentence is valid if: (float)sentence.length() / (replacedSentence.length()+1)) <= REPLACE_RATIO
+#REPLACE_COUNT:sentence is valid if: sentence.length() - (replacedSentence.length()) < REPLACE_COUNT
+#all entries of a rule are AND-chained
+# empty lines will be skipped...
+
+RULE 1
+DESC:Satzanfang: Kleinbuchstaben, math.Zeichen, ...
+REGEXP:^[\p{Ll}\p{Sm}\p{Pd}\p{Ps}\p{Pc}]
+
+RULE 2
+DESC:Satzanfang: weitere besondere Zeichen
+REGEXP:(^[*\?\.\,\/])|(^\))|(^\.)
+
+RULE 3
+DESC:Kein Satzendezeichen
+REGEXP:[^\p{P}]$
+
+RULE 5
+DESC:G e s p e r r t e r Text
+REGEXP: \p{L} \p{L} 
+
+RULE 6
+DESC:Zwei aufeinanderfolgende Leerzeichen
+REGEXP:  
+
+RULE 7
+DESC:Zu viele Kommata (mind. 10)
+REGEXP:,.*,.*,.*,.*,.*,.*,.*,.*,.*,
+
+RULE 8
+DESC:Zu viele Punkte (mind. 8)
+REGEXP:\..*\..*\..*\..*\..*\..*\..*\.
+
+RULE 9
+DESC:Zu viele Leerzeichen
+REPLACE_CHARS: 
+REPLACE_COUNT:50
+
+RULE 10
+DESC:Anteilig zu viele Leerzeichen
+REPLACE_CHARS: 
+REPLACE_RATIO:1.4
+
+RULE 11
+DESC:Sätze mit auffälligen Sonderzeichen
+REGEXP:[|\[\]]|(>>)|(<<)|\\
+
+RULE 12
+DESC:Sätze, die mehrere Zeichen '/', ')', '&', ':' besitzen.
+REPLACE_CHARS:/)&:#
+REPLACE_COUNT:8
+
+RULE 13
+DESC:Viele Großbuchstaben/Zeichen gleicher Art hintereinander
+REGEXP:[\p{Lu} \.,\/-]{22}
+
+RULE 14
+DESC:Viele Ziffern und Sonderzeichen hintereinander
+REGEXP:[\p{N} :\\.,\/-]{16}
+
+RULE 15
+DESC:Kurze Sätze, die viele Ziffern vor .,/ besitzen
+REGEXP:[\p{N}.,\/-]{6}
+MINLENGTH:45
+
+RULE 16
+DESC:Sätze, die . . . am Satzende besitzen und maximal 60 Zeichen lang sind
+REGEXP:\. \. \.$
+MINLENGTH:60
+
+RULE 17
+DESC:Satz enthält '...'
+REGEXP:\.\.\.
+
+RULE 18
+DESC:Sätze, die mehrere aufeinanderfolgende '!', '?' besitzen
+REGEXP:[?!]{2}
+
+RULE 19
+DESC:Sätze, die mindestens 8 großgeschriebene Wörter hintereinander besitzen
+REGEXP:(\p{Lu}\p{L}* ){8}
+
+RULE 20
+DESC:Sätze, die Leerzeichen vor Satzzeichen (außer ,wort) besitzen
+REGEXP: [\.,?!]
+
+RULE 21
+DESC:Sätze, die Initialien bzw. getrennte Abkürzungen am Satzende besitzen
+REGEXP:([\. ]\p{Lu}| \p{N}|-ing|str)[\.:][\"\']*$
+
+RULE 22
+DESC:Satz ist zu kurz
+MINLENGTH:15
+
+RULE 23
+DESC:Satz ist zu lang
+MAXLENGTH:255
+
+RULE 24
+DESC:Tabulator im Satz
+REGEXP:\t
+
+RULE 25
+DESC:Zeichen die durch Kodierungsfehler im Satz enthalten sind
+REGEXP:[||||||||||||||||||||||||||||||||| |Â|Ã|�||­]
+
+RULE 26
+DESC:Sonderzeichen am Satzanfang
+REGEXP:^[#\*\|§\[-\\:]
+
+RULE 27
+DESC:Sätze mit Raute
+REGEXP:#
+
+RULE 28
+DESC:Istgleich-Zeichen
+REGEXP:=
+
+RULE 29
+DESC:Diverse illegale Zeichen (z.B. Copyright, at-Symbole, eckige Klammern, geschweifte Klammern, Unterstrich)
+REGEXP:©|@|\[|\]|\{|\}|\_|√|■|►|●|♥|♩|♪|♫|♬|\p{Cc}
+
+RULE 30
+DESC:Illegale Satzendezeichen
+REGEXP:[%\):;\,/*]$
+
+Rule 31
+DESC:Illegale Zeichenkombinationen: Mathematik
+REGEXP:(.*\*.*\*.*\*.*)|(.*\+.*\+.*\+.*)|(.*=.*=.*)|(\^)
+
+Rule 32
+DESC:HTML Entities
+REGEXP:&[a-z]{2,5};
+
+Rule 33
+DESC:Fragezeichen vor Buchstaben
+REGEXP:[\?][\p{L}]
+
+Rule 34
+DESC:Satzende = Komma + Großbuchstabe + Punkt
+REGEXP:,\p{Lu}\.$
+
+Rule 35
+DESC:Große Zahlen am Satzanfang
+REGEXP:^[0-9]{5}
+
+Rule 36
+DESC:Vier-Byte Unicode.
+REGEXP:[^\u0000-\uFFFF]
+
+Rule 37
+DESC:Ungewoehnlicher Zeilenumbruch.
+REGEXP:\u2028
+
+RULE 38
+DESC:Wahrscheinlich falsche Satzsegmentierung
+REGEXP:[a-zäöüß]{5}\. [a-zäöüß]{2}
+
+RULE 39
+DESC:Mehrere Punkte hintereinander
+REGEXP:\.\.
+
+RULE 40
+DESC:Sätze, die mit Ziffern anfangen
+REGEXP:^[0-9]

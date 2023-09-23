@@ -1,0 +1,72 @@
+﻿### HTML Entities
+&apos;	'
+&auml;	ä
+&mdash;	-
+&nbsp;	 
+&ndash;	-
+&ordf;	ª
+&ouml;	ö
+&pound;	£
+&szlig;	ß
+&uuml;	﻿ü
+&Uuml;	﻿Ü
+&ldquo;	"
+&iquest;	¿
+&itrema;	ï
+&laquo;	'
+&lsquo;	'
+&not;	¬
+&oelig;	œ
+&OElig;	Œ
+&ograve;	ò
+&ordm;	º
+&Ouml;	Ö
+&para;	¶
+&pi;	π
+&prime;	′
+&Prime;	″
+&radic;	√
+&raquo;	'
+&REG;	(r)
+&rsquo;	'
+&sbquo;	‚
+&Scaron;	Š
+&scaron;	š
+&sect;	§
+&sup1;	¹
+&thinsp;	 
+&times;	×
+&trade;	(tm)
+&yen;	¥
+&acirc;	â
+&agrave;	à
+&alpha;	α
+&Amp;	&
+&amp;	&
+&apos;	'
+&Auml;	Ä
+&auml;	ä
+&beta;	β
+&brvbar;	¦
+&bull;	•
+&cent;	¢
+&curren;	¤
+&Dagger;	‡
+&degree;	† 
+&eacute;	é
+&ecirc;	ê
+&egrave;	è
+&EGrave;	È
+&ensp;	 
+&euml;	ë
+&euro;	€
+&frac12;	1/2
+&frac14;	1/4
+&frac34;	3/4
+&frasl;	⁄
+&gamma;	γ
+&gt;	>
+&hellip;	...
+
+### Other replacements
+ ";	 "
