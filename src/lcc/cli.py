@@ -278,6 +278,57 @@ def make_cliparser() -> Tuple[ArgumentParser, Dict[str, ArgumentParser]]:
         help="Filename for replacements, relative to --dn-rules folder. Enables replacements.",
     )
 
+    # - lani - language identification
+
+    shared_lani_config_args = ArgumentParser(add_help=False)
+    # init args
+    shared_lani_config_args.add_argument(
+        "--dn-wordlists",
+        dest="dn_wordlists",
+        required=True,
+        help="Folder containing language wordlist files.",
+    )
+    shared_lani_config_args.add_argument(
+        "--special-chars",
+        dest="special_chars",
+        required=False,
+        default=None,
+        help="Regular expression for characters that will be deleted from the input.",
+    )
+    shared_lani_config_args.add_argument(
+        "--fn-filterlist",
+        dest="fn_filterlist",
+        required=False,
+        default=None,
+        help="File with words that will be filtered out before language identification.",
+    )
+    # runtime args
+    shared_lani_config_args.add_argument(
+        "--max-words",
+        dest="max_words",
+        required=False,
+        default=0,
+        help="Number of words to check at most for language identification."
+        " Will intelligently skip in input.",
+    )
+    shared_lani_config_args.add_argument(
+        "--reduced",
+        dest="reduced",
+        required=False,
+        action="store_true",
+        default=False,
+        help="Compute only reduced set of information (no coverage/wordcount stats).",
+    )
+    shared_lani_config_args.add_argument(
+        "--language",
+        dest="languages",
+        required=False,
+        action="append",
+        help="List of languages to check against."
+        " NOTE: if only one language is provided, it is assumed this is the target language"
+        " and similar languages for it will be chosen to compare against.",
+    )
+
     # - segmentizer
 
     shared_segmentize_config_args = ArgumentParser(add_help=False)
@@ -429,6 +480,21 @@ def make_cliparser() -> Tuple[ArgumentParser, Dict[str, ArgumentParser]]:
         help="Clean sentences in interactive input loop.",
         formatter_class=ArgumentDefaultsHelpFormatter,
         parents=[shared_cleaner_config_args],
+    )
+
+    parser_lani = subparsers.add_parser(
+        "lani",
+        help="Sentence language identification.",
+        formatter_class=ArgumentDefaultsHelpFormatter,
+        parents=[shared_lani_config_args, shared_general_args, shared_parallel_args],
+    )
+    # _add_input_output_and_format_params(parser_lani, lcc.workflow.lani_sentences)
+
+    parser_lani_loop = subparsers.add_parser(
+        "lani-loop",
+        help="Sentence language identification in interactive input loop.",
+        formatter_class=ArgumentDefaultsHelpFormatter,
+        parents=[shared_lani_config_args],
     )
 
     parser_segmentize = subparsers.add_parser(
@@ -592,6 +658,8 @@ def make_cliparser() -> Tuple[ArgumentParser, Dict[str, ArgumentParser]]:
     lookup_subparsers["tokenize-loop"] = parser_tokenize_loop
     lookup_subparsers["cleaner"] = parser_cleaner
     lookup_subparsers["cleaner-loop"] = parser_cleaner_loop
+    lookup_subparsers["lani"] = parser_lani
+    lookup_subparsers["lani-loop"] = parser_lani_loop
     lookup_subparsers["segmentize"] = parser_segmentize
     lookup_subparsers["segmentize-loop"] = parser_segmentize_loop
     lookup_subparsers["convert-source2jsonl"] = parser_convert_source2jsonl
@@ -710,6 +778,66 @@ def main(args: Optional[Sequence[str]] = None):
                 do_replacements=do_replacements,
                 n_cpus=args_parsed.n_cpus,
             )
+
+    elif args_parsed.mode in ("lani", "lani-loop"):
+        import lcc.language.sentence
+
+        lani = lcc.language.sentence.LanIKernel(
+            args_parsed.dn_wordlists,
+            specialChars=args_parsed.special_chars,
+            fn_filterlist=args_parsed.fn_filterlist,
+        )
+        fn_lang_dist = os.path.join(args_parsed.dn_wordlists, "..", "lang_dist.tsv")
+
+        languages = args_parsed.languages
+        if languages and len(languages) == 1:
+            LOGGER.debug("Main language to check for is '%s' ...", languages[0])
+            # find similar languages + defaults
+            languages = lcc.language.sentence.get_languages_to_check_for(
+                languages[0], fn_lang_dist
+            )
+            LOGGER.debug("Selected languages to check against: %s", languages)
+
+        if languages:
+            # but trim back to only known languages
+            languages = lani.datasourcemngr.languages & set(languages)
+            LOGGER.debug("Keeping known languages to check against: %s", languages)
+
+        if args_parsed.mode == "lani-loop":
+            try:
+                print("Exit with Ctrl+D.")
+                while True:
+                    line = input(" Input: ")
+                    if not line:
+                        continue
+                    try:
+                        result = lani.evaluate(
+                            line,
+                            languages=languages,
+                            reduced=args_parsed.reduced,
+                            num_words_to_check=args_parsed.max_words,
+                        )
+                        lang_result = result.get_result()
+                    except Exception as ex:
+                        print(f" Error: {ex}")
+                        continue
+                    LOGGER.debug("result: %s", lang_result)
+                    if lang_result.is_known():
+                        print(
+                            f"Result: Detected language is '{lang_result.language}' "
+                            f"(prob={lang_result.probability}%, tokens={lang_result.wordcount},"
+                            f" coverage={round(lang_result.coverage*100):d}%).\n"
+                        )
+                    else:
+                        print(
+                            f"Result: No language could be detected with high confidence!"
+                        )
+                        LOGGER.debug("details: %s", result)
+            except EOFError:
+                print()
+
+        elif args_parsed.mode == "lani":
+            raise NotImplementedError("Lani workflow not implemented yet!")
 
     elif args_parsed.mode in ("segmentize", "segmentize-loop"):
         import lcc.segmentizer

@@ -1,6 +1,6 @@
 # Leipzig Corpora Collection (LCC) Natural Language Processing (NLP) Tools
 
-The LCC-NLP tools for now only include a **sentence segmentizer**, **sentence cleaner** and **word tokenizer**. Additionally, it provides some methods to work with SOURCE and MEDUSA file formats that are in use at LCC.
+The LCC-NLP tools for now only include a **sentence segmentizer**, **sentence cleaner**, **sentence language classifier** and **word tokenizer**. Additionally, it provides some methods to work with SOURCE and MEDUSA file formats that are in use at LCC.
 This library can be used embedded or as CLI tool.
 
 A spaCy integration is planned.
@@ -108,6 +108,8 @@ lcc-nlp cleaner \
     --dn-rules resources/cleaner/ \
     input.medusa output.medusa
 ```
+
+### Sentence Language Identification
 
 ### Word Tokenizer
 
