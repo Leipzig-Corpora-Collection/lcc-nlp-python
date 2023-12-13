@@ -599,6 +599,21 @@ class LineAwareSegmentizer(Segmentizer):
         self.use_carriage_return_as_boundary = use_carriage_return_as_boundary
         self.use_empty_line_as_boundary = use_empty_line_as_boundary
 
+    # def __reduce__(self):
+    #     args = (
+    #         self.fn_sentence_boundaries,
+    #         self.fn_pre_boundary_rules,
+    #         self.fn_pre_boundaries_list,
+    #         self.fn_post_boundary_rules,
+    #         self.fn_post_boundaries_list,
+    #         self.encoding,
+    #         self.is_auto_uppercase_first_letter_pre_list,
+    #         self.is_trim_mode,
+    #         self.use_carriage_return_as_boundary,
+    #         self.use_empty_line_as_boundary,
+    #     )
+    #     return (self.__class__, args, None, None)
+
     def _prepare_text(self, text: str) -> str:
         lines = text.splitlines(keepends=False)
 

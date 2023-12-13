@@ -501,6 +501,15 @@ class CharacterBasedWordTokenizerImproved(AbstractWordTokenizer):
 
         return tokenizer
 
+    # def __reduce__(self):
+    #     args = (
+    #         self.strAbbrevListFile,
+    #         self.TOKENISATION_CHARACTERS_FILE_NAME,
+    #         self.strCharacterActionsFile,
+    #         self.fixedTokensFile,
+    #     )
+    #     return (self.__class__, args, None, None)
+
     def init(self):
         super().init()
 
