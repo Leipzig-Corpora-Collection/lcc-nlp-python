@@ -214,7 +214,7 @@ def _generate_filenames(
 
 
 OpenTextMode = Literal["w", "a", "r"]
-OpenBinaryModeWriting = Literal["wb", "bw"]
+OpenBinaryModeWriting = Literal["wb", "bw", "ab", "ba"]
 OpenBinaryModeReading = Literal["rb", "br"]
 
 
@@ -250,14 +250,14 @@ def _open_stream(
     # https://stackoverflow.com/a/53088625/9360161
     # https://docs.python.org/3.9/library/contextlib.html#contextlib.nullcontext
 
-    if not any(mode_char in mode for mode_char in ("r", "w")):
-        raise ValueError("'mode' requires one of 'r' or 'w'")
+    if not any(mode_char in mode for mode_char in ("r", "w", "a")):
+        raise ValueError("'mode' requires one of 'r' or 'w'/'a'")
 
     if fn == "-":
         fp: Union[typing.TextIO, typing.BinaryIO]
         if "r" in mode:
             fp = sys.stdin
-        elif "w" in mode:
+        elif "w" in mode or "a" in mode:
             fp = sys.stdout
         else:
             raise ValueError("Unknown 'mode' for stdin/stdout!")
@@ -609,9 +609,9 @@ def _write_source_doc(fp: io.BufferedIOBase, doc: DocAndMeta, encoding: str = EN
 
 
 def write_source_docs_iter(
-    fn: str, docs: Iterable[DocAndMeta], encoding: str = ENCODING
+    fn: str, docs: Iterable[DocAndMeta], encoding: str = ENCODING, mode="wb"
 ):
-    with _open_stream(fn, "wb") as fp:
+    with _open_stream(fn, mode) as fp:
         for doc in docs:
             _write_source_doc(fp, doc, encoding=encoding)  # type: ignore[arg-type]
 

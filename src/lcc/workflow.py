@@ -15,6 +15,8 @@ from lcc.cleaner import SentenceCleaner
 from lcc.io import WARC_SUPPORTED
 from lcc.io import FileFormats
 from lcc.io import _validate_file_format
+from lcc.language.sentence import LanIKernel
+from lcc.language.sentence import LANG_UNKNOWN
 from lcc.segmentizer import AbstractSegmentizer
 from lcc.segmentizer import LineAwareSegmentizer
 from lcc.tokenizer import AbstractWordTokenizer
@@ -278,6 +280,101 @@ def clean_sentences(
             lcc.io.write_sentences_to_medusa_format_iter(
                 fn_output, sentences_cleaned_filtered_iter
             )
+        else:
+            raise RuntimeError(
+                f"Detected output format '{fmt_output_detected}' should be valid here!"
+            )
+
+    else:
+        raise RuntimeError(
+            f"Detected input format '{fmt_input_detected}' should be valid here!"
+        )
+
+
+# ---------------------------------------------------------------------------
+# sentence language identification
+
+
+def identify_language(
+    fn_input: str,
+    dn_output: str,
+    lani: LanIKernel,
+    fmt_input: Optional[Literal[FileFormats.SOURCE]] = None,
+    fmt_output: Optional[Literal[FileFormats.SOURCE]] = FileFormats.SOURCE,
+):
+    # check filenames
+    if not fn_input:
+        raise ValueError("Argument 'fn_input' is required!")
+    if not dn_output:
+        raise ValueError("Argument 'dn_output' is required!")
+    if not os.path.exists(fn_input) and fn_input != "-":
+        raise FileNotFoundError(f"Input file '{fn_input}' does not exist!")
+
+    # check tool
+    if lani is None:
+        raise ValueError("Argument 'lani' is required!")
+
+    # check file formats
+    fmt_input_detected = _validate_file_format(
+        fn_input, fmt_input, identify_language, "fmt_input", "input"
+    )
+    fmt_output_detected = fmt_output
+
+    if fmt_input_detected in (FileFormats.SOURCE,):
+        # load documents
+        if fmt_input_detected is FileFormats.SOURCE:
+            input_source_iter = lcc.io.parse_source_docs_iter(
+                fn_input, add_content=True
+            )
+        else:
+            raise RuntimeError("Unsupported input format?!")
+
+        # split lines
+        def _split_lines(doc: lcc.io.DocAndMeta, encoding: str = ENCODING):
+            sentences: List[str] = list()
+            content = doc.content
+            if isinstance(content, (bytes, bytearray)):
+                content = content.decode(encoding=encoding)
+            if content:
+                sentences = content.splitlines(keepends=False)
+            return lcc.io.SentencesAndMeta(meta=doc.meta, sentences=sentences)
+
+        source_sentences_iter = map(_split_lines, input_source_iter)
+
+        # perform sentence language identification
+        def _single_doc_sentence_language_identification(
+            doc: lcc.io.SentencesAndMeta,
+        ) -> Dict[str, lcc.io.SentencesAndMeta]:
+            lang_split_sentences: Dict[str, List[str]] = dict()
+
+            for sentence in doc.sentences:
+                result = lani.evaluate(sentence)
+                language: str = LANG_UNKNOWN
+                if result:
+                    language = result.get_result().language
+                if language not in lang_split_sentences:
+                    lang_split_sentences[language] = list()
+                lang_split_sentences[language].append(sentence)
+
+            return {
+                lang: lcc.io.SentencesAndMeta(meta=doc.meta, sentences=sents)
+                for lang, sents in lang_split_sentences.items()
+            }
+
+        sources_lani_iter = map(
+            _single_doc_sentence_language_identification, source_sentences_iter
+        )
+
+        # write results
+        if fmt_output_detected is FileFormats.SOURCE:
+            # TODO: temporary, will probably need to restructure stuff here
+            for item in sources_lani_iter:
+                for language, sdoc in item.items():
+                    doc = lcc.io.DocAndMeta(
+                        meta=sdoc.meta, content=("\n".join(sdoc.sentences))
+                    )
+                    fn_output = os.path.join(dn_output, f"{language}.{fmt_output_detected.value}")
+                    lcc.io.write_source_docs_iter(fn_output, [doc], mode="ab")
         else:
             raise RuntimeError(
                 f"Detected output format '{fmt_output_detected}' should be valid here!"
