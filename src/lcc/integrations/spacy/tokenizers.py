@@ -6,17 +6,19 @@ except ImportError:
     )
 
 from itertools import chain
-from typing import Iterable, Iterator, Optional
+from typing import Iterable
+from typing import Iterator
+from typing import Optional
 
 import srsly
-from spacy.vocab import Vocab
-from spacy.tokens import Doc
 from spacy import util
+from spacy.language import Language
+from spacy.tokens import Doc
+from spacy.vocab import Vocab
 
+from lcc.segmentizer import LineAwareSegmentizer
 from lcc.tokenizer import AlignedSentence
 from lcc.tokenizer import CharacterBasedWordTokenizerImproved
-from lcc.segmentizer import LineAwareSegmentizer
-
 
 # ---------------------------------------------------------------------------
 

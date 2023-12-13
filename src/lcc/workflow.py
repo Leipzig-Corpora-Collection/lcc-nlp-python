@@ -15,8 +15,8 @@ from lcc.cleaner import SentenceCleaner
 from lcc.io import WARC_SUPPORTED
 from lcc.io import FileFormats
 from lcc.io import _validate_file_format
-from lcc.language.sentence import LanIKernel
 from lcc.language.sentence import LANG_UNKNOWN
+from lcc.language.sentence import LanIKernel
 from lcc.segmentizer import AbstractSegmentizer
 from lcc.segmentizer import LineAwareSegmentizer
 from lcc.tokenizer import AbstractWordTokenizer
@@ -373,7 +373,9 @@ def identify_language(
                     doc = lcc.io.DocAndMeta(
                         meta=sdoc.meta, content=("\n".join(sdoc.sentences))
                     )
-                    fn_output = os.path.join(dn_output, f"{language}.{fmt_output_detected.value}")
+                    fn_output = os.path.join(
+                        dn_output, f"{language}.{fmt_output_detected.value}"
+                    )
                     lcc.io.write_source_docs_iter(fn_output, [doc], mode="ab")
         else:
             raise RuntimeError(
