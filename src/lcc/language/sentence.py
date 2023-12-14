@@ -132,9 +132,9 @@ class EvaluationResult:
         language = top_two_results[0][0]
         return LanguageResult(
             language=language,
-            probability=int(top_two_results[0][1] / prob_sum * 100),
+            probability=round(top_two_results[0][1] / prob_sum * 100),
             language_nextbest=top_two_results[1][0],
-            probability_nextbest=int(top_two_results[1][1] / prob_sum * 100),
+            probability_nextbest=round(top_two_results[1][1] / prob_sum * 100),
             coverage=self.get_language_coverage(language),
             wordcount=self.get_language_wordcount(language),
             MINCOVERAGE=mincov,

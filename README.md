@@ -236,6 +236,28 @@ False
 False
 ```
 
+### Annotations: Language Identification
+
+```python
+>>> import spacy
+>>> import lcc.integrations.spacy
+
+>>> # first create your default spaCy NLP model
+>>> nlp = spacy.load("en_core_web_sm")
+
+>>> # now add our component
+>>> lani = nlp.add_pipe("lani", config={})
+>>> lani
+<lcc.integrations.spacy.lani.LaniComponent object at 0x7fe72e7fdae0>
+
+>>> doc = nlp("This is a short example text in English.")
+>>> doc._.language
+('eng', 1.0)
+>>> doc = nlp("Aber das ist ein Text in German.")
+>>> doc._.language
+('deu', 1.0)
+```
+
 ## Development
 
 Optional dependencies:
