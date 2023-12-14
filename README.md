@@ -1,9 +1,9 @@
 # Leipzig Corpora Collection (LCC) Natural Language Processing (NLP) Tools
 
 The LCC-NLP tools for now only include a **sentence segmentizer**, **sentence cleaner**, **sentence language classifier** and **word tokenizer**. Additionally, it provides some methods to work with SOURCE and MEDUSA file formats that are in use at LCC.
-This library can be used embedded or as CLI tool.
+This library can be used embedded, with [spaCy](https://spacy.io/) or as CLI tool.
 
-A spaCy integration is planned.
+[Installation](#installation) | [Configuration](#configuration-and-resources) | [CLI Usage](#run-cli) | [spaCy Integration](#integration-with-spacy) | [Development](#development)
 
 ## Installation
 
@@ -29,7 +29,7 @@ TQDM progressbars are also included for parallel processing but they are for now
 
 ## Configuration and Resources
 
-Example configuration and resources can be found in [`resources/`](resources). The section [_Run CLI_](#run-cli) for how to use them.
+Example configuration and resources can be found in [`resources/`](resources). See the section [_Run CLI_](#run-cli) for how to use them.
 They are _NOT_ included in the distribution packages but can easily be downloaded from the git repository.
 
 ## Run CLI

@@ -1,5 +1,5 @@
 try:
-    import spacy
+    import spacy  # noqa: F401
 except ImportError:
     raise RuntimeError(
         "SpaCy integration requires the installation of the optional dependency 'spacy'!"

@@ -830,7 +830,7 @@ def main(args: Optional[Sequence[str]] = None):
                         )
                     else:
                         print(
-                            f"Result: No language could be detected with high confidence!"
+                            "Result: No language could be detected with high confidence!"
                         )
                         LOGGER.debug("details: %s", result)
             except EOFError:

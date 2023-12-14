@@ -2,7 +2,6 @@ import logging
 import os.path
 from dataclasses import dataclass
 from dataclasses import field
-from typing import Any
 from typing import Dict
 from typing import Iterable
 from typing import List
