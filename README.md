@@ -3,7 +3,7 @@
 The LCC-NLP tools for now only include a **sentence segmentizer**, **sentence cleaner**, **sentence language classifier** and **word tokenizer**. Additionally, it provides some methods to work with SOURCE and MEDUSA file formats that are in use at LCC.
 This library can be used embedded, with [spaCy](https://spacy.io/) or as CLI tool.
 
-[Installation](#installation) | [Configuration](#configuration-and-resources) | [CLI Usage](#run-cli) | [spaCy Integration](#integration-with-spacy) | [Development](#development)
+[Installation](#installation) | [Configuration](#configuration-and-resources) | [CLI Usage](#run-cli) | [spaCy Integration](#integration-with-spacy) | [Demos](#demos) | [Development](#development)
 
 Licensed under [_GNU General Public License v3 or later (GPLv3+)_](LICENSE).
 
@@ -261,6 +261,12 @@ False
 >>> doc._.language
 ('deu', 1.0)
 ```
+
+## Demos
+
+### Gradio
+
+Gradio demo applications can be found in [`examples/gradio/`](examples/gradio/). There is also a [`Dockerfile`](examples/gradio/Dockerfile) to allow easy deployment.
 
 ## Development
 
