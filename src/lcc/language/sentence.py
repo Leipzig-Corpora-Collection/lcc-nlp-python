@@ -38,6 +38,7 @@ LANGUAGES_ALWAYS = ["ara", "eng", "deu", "fra", "spa", "por", "rus"]
 
 
 # ---------------------------------------------------------------------------
+# Language Identification (LanI)
 
 
 @dataclass(frozen=True)
@@ -492,6 +493,7 @@ class LanIKernel:
 
 
 # ---------------------------------------------------------------------------
+# Language Similarity
 
 
 def get_languages_similar_to(

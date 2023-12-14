@@ -46,7 +46,7 @@ def create_sentencecleaner_component(
 @dataclass
 class FilterResult:
     id: int
-    description: str
+    description: Optional[str]
     filtered: bool
 
 

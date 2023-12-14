@@ -3,6 +3,21 @@ graft resources
 graft src
 graft tests
 
+prune examples
+
+prune resources/jlani/wordlists/plain
+include resources/jlani/wordlists/plain/afr.words
+include resources/jlani/wordlists/plain/ara.words
+include resources/jlani/wordlists/plain/deu.words
+include resources/jlani/wordlists/plain/ell.words
+include resources/jlani/wordlists/plain/eng.words
+include resources/jlani/wordlists/plain/fra.words
+include resources/jlani/wordlists/plain/ita.words
+include resources/jlani/wordlists/plain/por.words
+include resources/jlani/wordlists/plain/rus.words
+include resources/jlani/wordlists/plain/spa.words
+include resources/jlani/wordlists/plain/zho.words
+
 include setup.cfg
 include pyproject.toml
 include tox.ini

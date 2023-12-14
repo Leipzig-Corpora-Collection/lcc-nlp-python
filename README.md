@@ -5,6 +5,8 @@ This library can be used embedded, with [spaCy](https://spacy.io/) or as CLI too
 
 [Installation](#installation) | [Configuration](#configuration-and-resources) | [CLI Usage](#run-cli) | [spaCy Integration](#integration-with-spacy) | [Development](#development)
 
+Licensed under [_GNU General Public License v3 or later (GPLv3+)_](LICENSE).
+
 ## Installation
 
 ```bash
@@ -170,6 +172,8 @@ lcc-nlp split-source \
 ```
 
 ## Integration with `spaCy`
+
+Note that by default the various integrations and components use various resources (rules, language files, etc.) should be located relative in the working directory at `resources/`. Custom resource paths can be configured using the `config={}` parameter for the pipeline components and with the paths parameters for the tokenizer.
 
 ### Tokenizer
 
