@@ -111,6 +111,18 @@ lcc-nlp cleaner \
 
 ### Sentence Language Identification
 
+Run interactively in REPL loop for testing:
+
+```bash
+lcc-nlp lani-loop \
+    --dn-wordlists resources/jlani/wordlists \
+    [ --special-chars '[°!=_+-/)(,."&%$§#]?' ] \
+    [ --fn-filterlist resources/jlani/blacklist_utf8.txt ] \
+    [ --max-words 0 ] \
+    [ --reduced ] \
+    [ --language eng [ --language deu [ ... ]]]
+```
+
 ### Word Tokenizer
 
 Run interactively in REPL loop for testing:
@@ -155,6 +167,73 @@ lcc-nlp split-source \
     --max-bytes 1000000 \
     input.source split.source
 # -> split_001.source, split_002.source, ...
+```
+
+## Integration with `spaCy`
+
+### Tokenizer
+
+```python
+>>> import spacy
+>>> import lcc.integrations.spacy
+
+>>> # first create your default spaCy NLP model
+>>> nlp = spacy.load("en_core_web_sm", disable=["parser", "senter"])
+>>> # or choose other models/languages as required
+>>> # optionally disabled "parser" and "senter" to use our sentence segmentation annotations in 'Token.is_sent_start'
+
+>>> # create the LCC tokenizer with the NLP Vocab, set path to tokenizer resources
+>>> #   and optionally sentence segmentizer resources for sentence start annotations
+>>> tokenizer = lcc.integrations.spacy.Tokenizer(nlp.vocab, "resources/tokenizer", "resources/segmentizer")
+>>> # substitute the default tokenizer with our own
+>>> nlp.tokenizer = tokenizer
+
+>>> # use NLP pipeline like usual
+>>> doc = nlp("This is a text.")
+>>> list(doc)
+[This, is, a, text, .]
+
+>>> # or with multiple sentences
+>>> doc = nlp("This is a text. And now another sentence!?")
+>>> doc
+This is a text. And now another sentence! ?
+>>> [(tok.text_with_ws, tok.is_sent_start) for tok in doc]
+[('This ', True), ('is ', False), ('a ', False), ('text', False), ('. ', False), ('And ', True), ('now ', False), ('another ', False), ('sentence', False), ('! ', False), ('? ', True)]
+```
+
+### Annotations: Sentence Quality / Cleaner
+
+```python
+>>> import spacy
+>>> import lcc.integrations.spacy
+>>> # from lcc.integrations.spacy import SentenceCleanerComponent
+
+>>> # first create your default spaCy NLP model
+>>> nlp = spacy.load("en_core_web_sm")
+
+>>> # now add our component
+>>> cleaner = nlp.add_pipe("sentencecleaner", config={"show_reason": True})
+>>> cleaner
+<lcc.integrations.spacy.cleaner.SentenceCleanerComponent object at 0x7ff2e0cb0af0>
+>>> # 'show_reason' to add annotations about which filters were triggered
+
+>>> doc = nlp("This is a text. And now another sentence!?")
+>>> # this input was filtered/marked due to one rule about some quality criterium
+>>> doc._.filtered
+True
+>>> # Doc._.filter_reasons is only available if the component is configured with 'show_reason=True'!
+>>> doc._.filter_reasons
+[FilterResult(id=18, description="General - Sätze, die mehrere aufeinanderfolgende '!', '?' besitzen", filtered=True)]
+
+>>> doc = nlp("This is a text.")
+>>> doc._.filtered
+False
+>>> doc._.filter_reasons
+[]
+>>> # alternatively, access component directly
+>>> doc_results = cleaner.lcc_cleaner.filter_sentence_results(doc.text)
+>>> any(doc_result.values())  # filtered?
+False
 ```
 
 ## Development

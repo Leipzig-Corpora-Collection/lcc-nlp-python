@@ -375,6 +375,21 @@ class SentenceCleaner:
 
         return sentence
 
+    def filter_sentence_results(
+        self, sentence: str, do_replacements: bool = True
+    ) -> Dict[SentenceFilter, bool]:
+        """Detailed SentenceFilters results for a single sentence."""
+        # String replacements
+        if do_replacements and self.replacer:
+            sentence = self.replacer.replace(sentence)
+
+        result: Dict[SentenceFilter, bool] = dict()
+
+        for filter_ in self.filters:
+            result[filter_] = not filter_.is_valid(sentence)
+
+        return result
+
     def load_rules(
         self,
         dn_rules: str,

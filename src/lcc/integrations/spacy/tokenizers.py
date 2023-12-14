@@ -12,7 +12,6 @@ from typing import Optional
 
 import srsly
 from spacy import util
-from spacy.language import Language
 from spacy.tokens import Doc
 from spacy.vocab import Vocab
 
@@ -234,9 +233,6 @@ class Tokenizer:
         ):
             self.lcc_segmentizer = data["lcc_segmentizer"]
         return self
-
-
-# ---------------------------------------------------------------------------
 
 
 # ---------------------------------------------------------------------------
