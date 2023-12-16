@@ -311,9 +311,9 @@ class MWUWordTokenizerMixin:
 
         self.MWUMap = dict()
         self.MWUIgnored = set()
-        with open(self.MWU_FILE_NAME, "r", encoding="utf-8") as fp:
+        with open(self.MWU_FILE_NAME, "r", encoding="utf-8", errors="ignore") as fp:
             for line in fp:
-                mwu_original = line.strip().split("\t")[0]
+                mwu_original: str = line.strip().split("\t")[0]
 
                 # removing backslashes
                 if "\\" in mwu_original:
@@ -333,16 +333,6 @@ class MWUWordTokenizerMixin:
                     self.MWUIgnored.add(line)
 
         LOGGER.info("%s different mwu's found and loaded.", len(self.knownNumbers2))
-
-        """
-                        if (strOrignMWU.indexOf(" ") > 0 && strOrignMWU.indexOf("   ") == -1) {
-                            String strTokenizedMWU = objTokenizer.execute(strOrignMWU).trim();
-                            knownNumbers2.add(strTokenizedMWU);
-
-                            if (objWriterTokMap != null) {
-                                objWriterTokMap.write(strTokenizedMWU + "\t" + strOrignMWU + "\n");
-                            }
-        """
 
     def get_MWU_tokens(self, line: str, whitespace_positions: List[int]) -> List[str]:
         # single word (Einzelwortzeile)
@@ -840,7 +830,7 @@ class CharacterBasedWordTokenizerImproved(AbstractWordTokenizer):
             return self.process_single_number(word)
 
         if not word.startswith("."):
-            return self.process_dot_as_suffix(word, is_sentence_end)
+            return self.process_dot_as_suffix(word, is_sentence_end).strip()
 
         objBuffer = []
         if "." in self.charActions:
@@ -900,7 +890,7 @@ class CharacterBasedWordTokenizerImproved(AbstractWordTokenizer):
             action = self.charActions["."][whatToDo]
             if action == 1:
                 # whitespace
-                objBuffer.append(" .")  # XXX: switched in original but makes no sense?
+                objBuffer.append(". ")
             elif action in (0, 3):
                 # do nothing
                 objBuffer.append(".")
@@ -985,6 +975,70 @@ class CharacterBasedWordTokenizerImproved(AbstractWordTokenizer):
             cnt += 1
         # XXX: is this return correct, shouldn't that be cnt? original might be wrong?
         return 0
+
+
+# ---------------------------------------------------------------------------
+
+
+# TODO: this needs to be a bit improved, it shouldn't really do much (anything) at this moment ...
+
+
+class CharacterBasedWordTokenizerImprovedWithMWUSupport(
+    MWUWordTokenizerMixin, CharacterBasedWordTokenizerImproved
+):
+    def __init__(
+        self,
+        strAbbrevListFile: Optional[str] = None,
+        TOKENISATION_CHARACTERS_FILE_NAME: Optional[str] = None,
+        strCharacterActionsFile: Optional[str] = None,
+        fixedTokensFile: Optional[str] = None,
+        MWU_FILE_NAME: Optional[str] = None,
+    ) -> None:
+        super().__init__(
+            strAbbrevListFile=strAbbrevListFile,
+            TOKENISATION_CHARACTERS_FILE_NAME=TOKENISATION_CHARACTERS_FILE_NAME,
+            strCharacterActionsFile=strCharacterActionsFile,
+            fixedTokensFile=fixedTokensFile,
+        )
+
+        self.MWU_FILE_NAME = MWU_FILE_NAME
+
+        self.init()
+
+    @classmethod
+    def create_default(
+        cls,
+        dn_resources: str = "resources",
+        MWU_FILE_NAME: Optional[str] = None,
+    ) -> "CharacterBasedWordTokenizerImprovedWithMWUSupport":
+        strAbbrevListFile = os.path.join(dn_resources, "default.abbrev")
+        TOKENISATION_CHARACTERS_FILE_NAME = os.path.join(dn_resources, "100-wn-all.txt")
+        strCharacterActionsFile = os.path.join(
+            dn_resources, "tokenization_character_actions.txt"
+        )
+        fixedTokensFile = os.path.join(dn_resources, "fixed_tokens.txt")
+
+        tokenizer = cls(
+            strAbbrevListFile=strAbbrevListFile,
+            TOKENISATION_CHARACTERS_FILE_NAME=TOKENISATION_CHARACTERS_FILE_NAME,
+            strCharacterActionsFile=strCharacterActionsFile,
+            fixedTokensFile=fixedTokensFile,
+            MWU_FILE_NAME=MWU_FILE_NAME,
+        )
+
+        return tokenizer
+
+    def init(self):
+        super().init()
+
+        self._load_mwus()
+
+    def _load_mwus(self):
+        self.load_MWU(self)
+        if self.knownNumbers2:
+            self.objFixedTokens.update(self.knownNumbers2)
+
+    # TODO: handle tokenization (infix) differently? (merge tokens together afterwards?)
 
 
 # ---------------------------------------------------------------------------

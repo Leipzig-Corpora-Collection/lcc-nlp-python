@@ -52,6 +52,33 @@ def test_simple_2(tokenizer: lcc.tokenizer.CharacterBasedWordTokenizerImproved):
         assert sentence_tok == tokenizer.execute(sentence), f"example: {exno}"
 
 
+def test_simple_3(tokenizer: lcc.tokenizer.CharacterBasedWordTokenizerImproved):
+    sentences = [
+        """And was that in the U.S.?""",
+        """At a November 7 hearing, the couple still didn’t have representation.""",
+    ]
+    sentences_tok = [
+        """And was that in the U.S. ?""",
+        """At a November 7 hearing , the couple still didn’t have representation .""",
+    ]
+
+    for exno, (sentence, sentence_tok) in enumerate(zip(sentences, sentences_tok)):
+        assert sentence_tok == tokenizer.execute(sentence), f"example: {exno}"
+
+
+def test_simple_3_neg(tokenizer: lcc.tokenizer.CharacterBasedWordTokenizerImproved):
+    # NOTE: python handles unicode whitespaces much better, e.g., '\u202f'
+    sentences = [
+        """As spokesperson, she has received the Community Hero Award from the Atlanta Braves and Fox Sports South, and has been featured on the covers of  magazine."""
+    ]
+    sentences_tok = [
+        """As spokesperson, she has received the Community Hero Award from the Atlanta Braves and Fox Sports South , and has been featured on the covers of  magazine ."""
+    ]
+
+    for exno, (sentence, sentence_tok) in enumerate(zip(sentences, sentences_tok)):
+        assert sentence_tok != tokenizer.execute(sentence), f"example: {exno}"
+
+
 # ---------------------------------------------------------------------------
 
 

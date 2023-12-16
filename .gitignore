@@ -17,5 +17,6 @@ coverage.xml
 venv/
 
 *.log
+data*/
 
 TODO
