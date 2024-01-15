@@ -382,9 +382,17 @@ class LanIKernel:
                 )
 
                 language = wl_file[: -len(EXT_WORDS)]
-                self.datasourcemngr.add_datasource_from_file(
-                    language, os.path.join(dn_wordlists, wl_file)
-                )
+                try:
+                    self.datasourcemngr.add_datasource_from_file(
+                        language, os.path.join(dn_wordlists, wl_file)
+                    )
+                except Exception as ex:
+                    LOGGER.error(
+                        "Error adding datasource for %s from %s: %s",
+                        language,
+                        wl_file,
+                        ex,
+                    )
 
         LOGGER.debug("%s", self.datasourcemngr)
 

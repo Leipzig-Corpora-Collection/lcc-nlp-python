@@ -56,10 +56,12 @@ def test_simple_3(tokenizer: lcc.tokenizer.CharacterBasedWordTokenizerImproved):
     sentences = [
         """And was that in the U.S.?""",
         """At a November 7 hearing, the couple still didn’t have representation.""",
+        '''See "Summary Historical Consolidated Financial and Other Data of Ritchie Bros." and "Unaudited Pro Forma Condensed Combined Financial Information."''',
     ]
     sentences_tok = [
         """And was that in the U.S. ?""",
         """At a November 7 hearing , the couple still didn’t have representation .""",
+        '''See " Summary Historical Consolidated Financial and Other Data of Ritchie Bros. " and " Unaudited Pro Forma Condensed Combined Financial Information ."''',
     ]
 
     for exno, (sentence, sentence_tok) in enumerate(zip(sentences, sentences_tok)):
@@ -67,12 +69,16 @@ def test_simple_3(tokenizer: lcc.tokenizer.CharacterBasedWordTokenizerImproved):
 
 
 def test_simple_3_neg(tokenizer: lcc.tokenizer.CharacterBasedWordTokenizerImproved):
-    # NOTE: python handles unicode whitespaces much better, e.g., '\u202f'
+    # NOTE: python handles unicode whitespaces much better, e.g., '\u202f'; the next seem to work '\u200a', '\u2009'
     sentences = [
-        """As spokesperson, she has received the Community Hero Award from the Atlanta Braves and Fox Sports South, and has been featured on the covers of  magazine."""
+        """As spokesperson, she has received the Community Hero Award from the Atlanta Braves and Fox Sports South, and has been featured on the covers of  magazine.""",
+        # """</p> <p> ”For somebody that's connected to Mother Earth, you know, that can feel things, like me — I can feel things""",
+        # """Accordingly, information provided to the CODM in this quarter reflects one segment - Global Research and Development.""",
     ]
     sentences_tok = [
-        """As spokesperson, she has received the Community Hero Award from the Atlanta Braves and Fox Sports South , and has been featured on the covers of  magazine ."""
+        """As spokesperson, she has received the Community Hero Award from the Atlanta Braves and Fox Sports South , and has been featured on the covers of  magazine .""",
+        # """< / p > < p > ” For somebody that's connected to Mother Earth , you know , that can feel things , like me — I can feel things""",
+        # """Accordingly , information provided to the CODM in this quarter reflects one segment - Global Research and Development .""",
     ]
 
     for exno, (sentence, sentence_tok) in enumerate(zip(sentences, sentences_tok)):
